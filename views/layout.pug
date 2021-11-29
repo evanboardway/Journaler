@@ -3,7 +3,10 @@ html(lang="en")
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    
   body
+    include ./menu.pug
+
     block content
 
     include ./footer.pug

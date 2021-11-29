@@ -1,7 +1,8 @@
-form(action='/login' method='post')
-	label(for='username'): b Username:
-	input(type='text' name='username')
+section.content-container
+	form(action='/login' method='post')
+		label(for='username'): b Username:
+		input(type='text' name='username')
 
-	label(for='password'): b Password:
-	input(type='password' name='password')
-	button(type='submit') Submit
+		label(for='password'): b Password:
+		input(type='password' name='password')
+		button(type='submit') Submit
