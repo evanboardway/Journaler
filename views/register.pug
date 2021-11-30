@@ -5,12 +5,13 @@ block content
         h1.form-component SIGN UP
         form(action='/users/new' method='post')
 
-            if errors.password != null || errors.passwordConfirm != null
+            if errors.password || errors.passwordConfirm || errors.email
                 p.form-component.error Check the errors below
 
             div.form-component
                 label(for='email'): b Email:
                 input(type='text' placeholder="email" name='email')
+                label(for='email'): p.error #{errors.email}
             
             div.form-component
                 label(for='password'): b Password:

@@ -37,11 +37,15 @@ const userSchema = new Schema({
 		required: true,
 		unique: true,
 		validate: {
-			validator: (value) => {
-				console.log("validating")
-				var user = await User.findOne({email: value})
-				user ? Promise.resolve(false) : Promise.resolve(true)
-			}
+			validator: function(value) {
+				return new Promise((resolve, reject) => {
+					User.findOne({email: value}, function(err, user) {
+						if (err) { reject(err) }
+						else if (user) { reject("An account with this email address already exists") }
+						else { resolve(true) }
+					})
+				})
+			},
 		}
 	},
 	password: {
@@ -176,7 +180,7 @@ router.post('/new', async function (req, res, next) {
 	let salt = crypto.randomBytes(32).toString('hex');
 
 	if (req.body.password != req.body.passwordConfirm) {
-		return res.render('register', {errors: {passwordConfirm: "Passwords don't match"}})
+		res.render('register', { errors: { passwordConfirm: "Passwords don't match" } })
 	}
 
 	var newUser = User();
@@ -184,17 +188,15 @@ router.post('/new', async function (req, res, next) {
 	newUser.password = pbkdf2.pbkdf2Sync(req.body.password, salt, 1, 32, 'sha512').toString('hex');
 	newUser.salt = salt;
 
-	newUser.validate().catch(error => {
-		console.log(error)
-		return res.sendStatus(400)
+	newUser.validate().then(resolve => {
+		newUser.save()
+		res.redirect('/')
+	}).catch(reject => {
+		res.render('register', {errors: {email: reject.errors.email.reason}})
 	})
-
-	newUser.save();
-
-	res.render('login', {flash: "account created"})
 });
 
-router.get('/resetPassword', async function(req, res, next) {
+router.get('/resetPassword', async function (req, res, next) {
 	res.render('register')
 })
 
