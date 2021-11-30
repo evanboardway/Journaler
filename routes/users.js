@@ -34,7 +34,15 @@ const { Schema } = mongoose;
 const userSchema = new Schema({
 	email: {
 		type: String,
-		required: true
+		required: true,
+		unique: true,
+		validate: {
+			validator: (value) => {
+				console.log("validating")
+				var user = await User.findOne({email: value})
+				user ? Promise.resolve(false) : Promise.resolve(true)
+			}
+		}
 	},
 	password: {
 		type: String,
@@ -175,18 +183,15 @@ router.post('/new', async function (req, res, next) {
 	newUser.email = req.body.email;
 	newUser.password = pbkdf2.pbkdf2Sync(req.body.password, salt, 1, 32, 'sha512').toString('hex');
 	newUser.salt = salt;
-	newUser.admin = false;
 
-
-	let err = newUser.validateSync()
-	if (err) {
-		console.log("ERROR VALID");
-		return res.sendStatus(400);
-	};
+	newUser.validate().catch(error => {
+		console.log(error)
+		return res.sendStatus(400)
+	})
 
 	newUser.save();
 
-	res.redirect('index')
+	res.render('login', {flash: "account created"})
 });
 
 router.get('/resetPassword', async function(req, res, next) {
