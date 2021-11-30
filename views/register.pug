@@ -12,6 +12,14 @@ block content
                 label(for='email'): b Email:
                 input(type='text' placeholder="email" name='email')
                 label(for='email'): p.error #{errors.email}
+
+            div.form-component
+                label(for='first'): b First Name:
+                input(type='text' placeholder="ex. John" name='first')
+
+            div.form-component
+                label(for='last'): b Last Name:
+                input(type='text' placeholder="ex. Doe" name='last')
             
             div.form-component
                 label(for='password'): b Password:

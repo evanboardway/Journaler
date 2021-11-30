@@ -48,6 +48,14 @@ const userSchema = new Schema({
 			},
 		}
 	},
+	first: {
+		type: String,
+		reqired: true
+	},
+	last: {
+		type: String,
+		required: true
+	},
 	password: {
 		type: String,
 		required: true
@@ -187,6 +195,8 @@ router.post('/new', async function (req, res, next) {
 	newUser.email = req.body.email;
 	newUser.password = pbkdf2.pbkdf2Sync(req.body.password, salt, 1, 32, 'sha512').toString('hex');
 	newUser.salt = salt;
+	newUser.first = req.body.first
+	newUser.last = req.body.last
 
 	newUser.validate().then(resolve => {
 		newUser.save()

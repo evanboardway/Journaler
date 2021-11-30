@@ -28,7 +28,7 @@ router.get('/', function(req, res, next) {
   }
   flash = req.flash('info')
   hasFlash = flash.length == 0 ? false : true
-  res.render('index', { title: 'MyJournal - Data Collection Device', name: name, flashInfo: flash, hasFlash: hasFlash});
+  res.render('index', { title: 'MyJournal - Data Collection Device', name: name, flash: flash, hasFlash: hasFlash});
 });
 
 router.get('/about', function(req, res, next){
