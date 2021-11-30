@@ -161,28 +161,32 @@ router.post('/', checkAuth, async function (req, res, next) {
 });
 
 router.get('/new', async function (req, res, next) {
-	console.log("new get")
-	res.render('register');
+	res.render('register', {errors: {}});
 });
 
 router.post('/new', async function (req, res, next) {
-	console.log("new post")
-	let salt = generateSalt()
+	let salt = crypto.randomBytes(32).toString('hex');
 
-	const newUser = new User({
-		username: req.body.username,
-		password: pwHashSalt(req.body.password, salt),
-		salt: salt,
-	})
+	if (req.body.password != req.body.passwordConfirm) {
+		return res.render('register', {errors: {passwordConfirm: "Passwords don't match"}})
+	}
+
+	var newUser = User();
+	newUser.email = req.body.email;
+	newUser.password = pbkdf2.pbkdf2Sync(req.body.password, salt, 1, 32, 'sha512').toString('hex');
+	newUser.salt = salt;
+	newUser.admin = false;
+
 
 	let err = newUser.validateSync()
 	if (err) {
-		return res.sendStatus(400)
-	}
+		console.log("ERROR VALID");
+		return res.sendStatus(400);
+	};
 
-	newUser.save()
+	newUser.save();
 
-	return res.sendStatus(200)
+	res.redirect('index')
 });
 
 router.get('/resetPassword', async function(req, res, next) {

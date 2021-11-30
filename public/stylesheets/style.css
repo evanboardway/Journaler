@@ -100,6 +100,14 @@ nav {
   align-items: center;
 }
 
+.user-other-options a {
+  color: rgba(233, 233, 233, 0.5);
+}
+
+.user-other-options a:hover{
+  color: rgba(233, 233, 233, 1);
+}
+
 .form-component {
   display: flex;
   flex-direction: column;
@@ -129,5 +137,10 @@ nav {
   background-color: aquamarine;
   color: black;
   box-shadow: 0px 0px 10px 10px rgba(10, 10, 10, 0.1);
+}
+
+form p.error {
+  color: rgba(220, 38, 38, 1);
+  margin-top: 0.5em;
 }
 

@@ -4,13 +4,23 @@ block content
     section.content-container
         h1.form-component SIGN UP
         form(action='/users/new' method='post')
+
+            if errors.password != null || errors.passwordConfirm != null
+                p.form-component.error Check the errors below
+
             div.form-component
-                label(for='username'): b Username:
-                input(type='text' placeholder="username" name='username')
+                label(for='email'): b Email:
+                input(type='text' placeholder="email" name='email')
             
             div.form-component
                 label(for='password'): b Password:
                 input(type='password' placeholder="password" name='password')
+                label(for='password'): p.error #{errors.password}
+
+            div.form-component
+                label(for='passwordConfirm'): b Confirm Password:
+                input(type='password' placeholder="password" name='passwordConfirm')
+                label(for='passwordConfirm'): p.error #{errors.passwordConfirm}
 
             div.form-component
                 button(type='submit') CREATE ACCOUNT
