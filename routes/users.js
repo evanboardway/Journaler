@@ -32,22 +32,24 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
-    email: {
+	email: {
 		type: String,
 		required: true
 	},
-    password: {
+	password: {
 		type: String,
 		required: true
 	},
-    salt: String,
-    date: { 
+	salt: String,
+	date: {
 		type: Date,
-		default: Date.now },
-    admin: {
+		default: Date.now
+	},
+	admin: {
 		type: Boolean,
-		default: false }
-	
+		default: false
+	}
+
 });
 
 // User model
@@ -59,10 +61,10 @@ const User = mongoose.model('User', userSchema);
  * to see if it is the same information we have stored for
  * the user in the database.
  */
-const validPassword = function(password, salt, hash){
+const validPassword = function (password, salt, hash) {
 	let key = pbkdf2.pbkdf2Sync(password, salt, 1, 32, 'sha512');
 
-	if(key.toString('hex') != hash){
+	if (key.toString('hex') != hash) {
 		return false;
 	}
 	return true;
@@ -74,27 +76,27 @@ const validPassword = function(password, salt, hash){
  * how it works with our API here.
  */
 passport.use(new Strategy(
-	function(username, password, done) {
-	  User.findOne({ username: username }, function (err, user) {
-		  // Can't connect to Db?  We're done.
-		if (err) {
-			return done(err);
-		}
-		// User doesn't exist?  We're done.
-		if (!user) { 
-			console.log("No user found.");
-			return done(null, false);
-		}
-		// Got this far?  Check the password.
-		if (!validPassword(password, user.salt, user.password)) { 
-			console.log("Wrong password.");
-			return done(null, false);
-		}
-		// Otherwise, let them in and store the user in req.
-		return done(null, user);
-	  });
+	function (username, password, done) {
+		User.findOne({ username: username }, function (err, user) {
+			// Can't connect to Db?  We're done.
+			if (err) {
+				return done(err);
+			}
+			// User doesn't exist?  We're done.
+			if (!user) {
+				console.log("No user found.");
+				return done(null, false);
+			}
+			// Got this far?  Check the password.
+			if (!validPassword(password, user.salt, user.password)) {
+				console.log("Wrong password.");
+				return done(null, false);
+			}
+			// Otherwise, let them in and store the user in req.
+			return done(null, user);
+		});
 	}
-  )
+)
 );
 
 // I don't want to type this passport.authenticate, blah, blah line
@@ -109,8 +111,8 @@ const checkAuth = passport.authenticate('basic', { session: false });
  * GET users listing.
  * This will get all users, and should only be usable by an admin.
  */
-router.get('/', checkAuth, async function(req, res, next) {
-	if(req.user.admin){
+router.get('/', checkAuth, async function (req, res, next) {
+	if (req.user.admin) {
 		var users = await User.find({})
 		res.json(users);
 	} else {
@@ -125,9 +127,9 @@ router.get('/', checkAuth, async function(req, res, next) {
  * This function may be used by an administrator, or by a user
  * ONLY IF they are asking for their own information.
  */
-router.get('/:userId', checkAuth, async function(req, res, next){
-	if(req.user.admin || req.user._id == req.params.userId){
-		var user = await User.findOne({ _id : req.params.userId });
+router.get('/find/:userId', checkAuth, async function (req, res, next) {
+	if (req.user.admin || req.user._id == req.params.userId) {
+		var user = await User.findOne({ _id: req.params.userId });
 		res.json(user);
 	} else {
 		var error = new Error("Not authorized.");
@@ -140,9 +142,9 @@ router.get('/:userId', checkAuth, async function(req, res, next){
  * POST a new user.
  * Only administrators can add new users.
  */
-router.post('/', checkAuth, async function(req, res, next){
+router.post('/', checkAuth, async function (req, res, next) {
 	console.log(req.body);
-	if(req.user.admin){
+	if (req.user.admin) {
 		var newUser = User();
 		newUser.email = req.body.username;
 		newUser.salt = crypto.randomBytes(32).toString('hex');
@@ -151,11 +153,40 @@ router.post('/', checkAuth, async function(req, res, next){
 		newUser.admin = false;
 		newUser.save();
 		res.send(200);
-        } else {
+	} else {
 		var error = new Error("Not authorized.");
 		error.status = 401;
 		throw error;
-        }
+	}
 });
+
+router.get('/new', async function (req, res, next) {
+	console.log("new get")
+	res.render('register');
+});
+
+router.post('/new', async function (req, res, next) {
+	console.log("new post")
+	let salt = generateSalt()
+
+	const newUser = new User({
+		username: req.body.username,
+		password: pwHashSalt(req.body.password, salt),
+		salt: salt,
+	})
+
+	let err = newUser.validateSync()
+	if (err) {
+		return res.sendStatus(400)
+	}
+
+	newUser.save()
+
+	return res.sendStatus(200)
+});
+
+router.get('/resetPassword', async function(req, res, next) {
+	res.render('register')
+})
 
 module.exports = { checkAuth, router, User, validPassword };

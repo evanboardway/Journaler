@@ -23,6 +23,7 @@ nav {
   justify-content: space-between;
   align-items: center;
   color: white;
+  background-color: rgba(31, 41, 55, 1);
 }
 
 .menu {
@@ -89,6 +90,14 @@ nav {
   flex-direction: column;
   width: 40%;
   box-shadow: 0px 0px 20px 20px rgba(10, 10, 10, 0.1);
+}
+
+.user-other-options {
+  margin: 1em;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .form-component {

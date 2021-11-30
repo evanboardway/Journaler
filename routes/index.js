@@ -22,7 +22,7 @@ var checkAuthLocal = passport.authenticate('local', { failureRedirect: '/', sess
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    var name;
+  var name;
   if(req.user){
     var name = req.user.email;
   }
