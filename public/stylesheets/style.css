@@ -59,6 +59,33 @@ nav {
   width: 100%;
 }
 
+.flash {
+  width: 100%;
+  position: absolute;
+  bottom: 10em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.flash span.info {
+  padding: 1em;
+  background-color: rgba(16, 185, 129, 1);
+  box-shadow: 0px 0px 20px 20px rgba(10, 10, 10, 0.1);
+  border-radius: 1em;
+  margin: 1em;
+}
+
+.flash span.error {
+  padding: 1em;
+  background-color: rgba(239, 68, 68, 1);
+  box-shadow: 0px 0px 20px 20px rgba(10, 10, 10, 0.1);
+  border-radius: 1em;
+  margin: 1em;
+}
+
+
 .logo {
   margin: 0.2em;
   display: flex;

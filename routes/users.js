@@ -190,6 +190,7 @@ router.post('/new', async function (req, res, next) {
 
 	newUser.validate().then(resolve => {
 		newUser.save()
+		req.flash('info', 'Account created successfully')
 		res.redirect('/')
 	}).catch(reject => {
 		res.render('register', {errors: {email: reject.errors.email.reason}})

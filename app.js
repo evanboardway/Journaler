@@ -20,6 +20,7 @@ var winston = require('winston');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var session = require('express-session');
+var flash = require('connect-flash')
 
 
 /**********
@@ -87,6 +88,8 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }));
+
+app.use(flash())
 
 // view engine setup (for later!)
 app.set('views', path.join(__dirname, 'views'));

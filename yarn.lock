@@ -268,6 +268,11 @@
   "resolved" "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz"
   "version" "0.0.1"
 
+"connect-flash@^0.1.1":
+  "integrity" "sha1-2GMPJtlaf4UfmVax6MxnMvO2qjA="
+  "resolved" "https://registry.npmjs.org/connect-flash/-/connect-flash-0.1.1.tgz"
+  "version" "0.1.1"
+
 "constantinople@^4.0.1":
   "integrity" "sha512-vCrqcSIq4//Gx74TXXCGnHpulY1dskqLTFGDmhrGxzeXL8lF8kvXv6mpNWlJj1uD4DW23D4ljAqbY4RRaaUZIw=="
   "resolved" "https://registry.npmjs.org/constantinople/-/constantinople-4.0.1.tgz"

@@ -26,7 +26,9 @@ router.get('/', function(req, res, next) {
   if(req.user){
     var name = req.user.email;
   }
-  res.render('index', { title: 'MyJournal - Data Collection Device', name: name });
+  flash = req.flash('info')
+  hasFlash = flash.length == 0 ? false : true
+  res.render('index', { title: 'MyJournal - Data Collection Device', name: name, flashInfo: flash, hasFlash: hasFlash});
 });
 
 router.get('/about', function(req, res, next){

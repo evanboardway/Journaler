@@ -9,6 +9,8 @@ html(lang="en")
 
     block content
 
-    h3 #{flash}
+    div.flash
+      if hasFlash
+        span.info #{flashInfo}
 
     include ./footer.pug
