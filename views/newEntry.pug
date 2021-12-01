@@ -2,7 +2,7 @@ extends layout
 
 block content
     section.entry-content-container
-        h1.form-component New Journal Entry
+        h1.form-component What's on your mind?
         form(action='/entries/new' method='post')
             div.form-component
                 label(for='mood'): b Mood:
@@ -20,10 +20,9 @@ block content
 
             input(type='hidden', name='weather', id="weatherInput")
 
-
             div.form-component
                 button(type='submit' id="newEntrySubmit") CREATE ENTRY
-    
+                
     script(src='/scripts/geolocation.js')
     
 

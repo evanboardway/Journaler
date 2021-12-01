@@ -5,7 +5,7 @@ block content
 
 	section.journal-wrapper
 		h1 Your Journal Entries
-		div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4")
+		div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mx-10")
 			each entry in entries
 				div(class="flex flex-col justify-between").journal-entry
 					form(class="mt-1 p-3 flex flex-row justify-end" action='/entries/delete' method='post')
@@ -30,3 +30,6 @@ block content
 						input(type='hidden' name='entryId' value=entry._id)
 						input(type='hidden' name='preUpdate' value="true")
 						button(type="submit" class="text-gray-700").submit-journal EDIT
+
+			div(class="flex flex-col justify-center items-center opacity-50 journal-entry hover:opacity-100")
+				a(class="text-4xl p-24 material-icons" href='/entries/new') add
