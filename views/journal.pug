@@ -1,14 +1,32 @@
 extends layout
 
 block content
-	table.table.table-striped
-		tr
-		th Date
-		th Mood
-		th Entry
+	link(href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet")
 
-		each e in entries
-			tr
-			td= e.date
-			td= e.mood
-			td= e.entry 
+	section.journal-wrapper
+		h1 Your Journal Entries
+		div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4")
+			each entry in entries
+				div(class="flex flex-col justify-between").journal-entry
+					form(class="mt-1 p-3 flex flex-row justify-end" action='/entries/delete' method='post')
+						input(type='hidden' name='entryId' value=entry._id)
+						button(class="text-red-500 font-bold text-xl" type='submit') x
+					div(class="p-3 flex flex-col")
+						span(class="flex flex-row justify-between flex-wrap").entry-component
+							p.font-bold Date: 
+							p  #{entry.date.getDay()}/#{entry.date.getMonth()}/#{entry.date.getFullYear()}
+						div(class="flex flex-row flex-wrap justify-start")
+							span(class="flex flex-grow justify-between").entry-component 
+								p.font-bold Mood: 
+								p #{entry.mood}
+							span(class="flex flex-grow justify-between").entry-component 
+								p.font-bold Weather: 
+								p #{entry.weather}
+						div(class="flex flex-grow flex-col").entry-component 
+							p.font-bold Entry: 
+							p #{entry.entry}
+				
+					form(action='/entries/update' method='post')
+						input(type='hidden' name='entryId' value=entry._id)
+						input(type='hidden' name='preUpdate' value="true")
+						button(type="submit" class="text-gray-700").submit-journal EDIT

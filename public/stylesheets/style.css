@@ -354,6 +354,10 @@ nav {
   box-shadow: 0px 0px 10px 10px rgba(10, 10, 10, 0.1);
 }
 
+.form-component button[disabled]:hover {
+  background-color: rgba(10, 10, 10, 0.4);
+}
+
 form p.error {
   color: rgba(220, 38, 38, 1);
   margin-top: 0.5em;
@@ -377,4 +381,54 @@ form p.error {
   background-color: rgba(33, 33, 33, 0.4);
 }
 
+.journal-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
+.journal-wrapper h1 {
+  font-size: 2em;
+  font-weight: thin;
+  margin: 1em;
+}
+
+.entry-component {
+  background-color: rgba(33, 33, 33, 0.1);
+  padding: 1em;
+  border-radius: 0.5em;
+  margin: 0.5em;
+}
+
+.journal {
+  display: flex;
+  flex-direction: row;
+}
+
+.journal-entry {
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: 1em;
+  border-radius: 0.5em;
+  box-shadow: 0px 0px 10px 10px rgba(10, 10, 10, 0.1);
+}
+
+.journal-entry p {
+  color:rgba(255, 255, 255, 0.9)
+}
+
+.journal-entry .submit-journal {
+  background-color: rgba(10, 10, 10, 0.1);
+  text-align: center;
+  padding: 1em;
+  border: none;
+  border-bottom-left-radius: 0.5em;
+  border-bottom-right-radius: 0.5em;
+  margin-top: 1em;
+  width: 100%;
+}
+
+.journal-entry .submit-journal:hover {
+  background-color: rgba(154, 6, 127, 0.9);
+  color: white
+}

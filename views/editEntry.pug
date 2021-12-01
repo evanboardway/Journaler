@@ -1,0 +1,27 @@
+extends layout
+
+block content
+    section.entry-content-container
+        h1.form-component Edit Journal Entry
+        form(action='/entries/update' method='post')
+            div.form-component
+                label(for='mood'): b Mood:
+                input(type='text' placeholder="Happy" name='mood' value=entry.mood)
+                if errors && errors.mood
+                    label(for='mood'): p.error #{errors.mood}
+            
+            div.form-component
+                label(for='entry'): b Entry:
+                textarea(type='textarea' placeholder="Whatchu wanna get off your chest huh?" name='entry') #{entry.entry}
+                if errors && errors.entry
+                    label(for='entry'): p.error #{errors.entry}
+
+            input(type='hidden' name='entryId' value=entry._id)
+
+            div.form-component
+                button(type='submit') SAVE CHANGES
+            
+            div.user-other-options
+                a(href='/journals') Nevermind, I don't wanna change anything
+        
+

@@ -128,69 +128,81 @@ router.post('/new', async function(req, res, next){
 		res.redirect('/')
 	}
 
-	let point = new Point({
-		type: 'Point',
-		coordinates: req.body.location
-	})
-
+	let loc = req.body.location.split(',')
 	
 	let entry = new Entry({
 		userId: req.user._id,
 		entry: req.body.entry,
 		mood: req.body.mood,
-		location: point
+		weather: req.body.weather,
+		location: new Point({
+			type: 'Point',
+			coordinates: [parseFloat(loc[0]), parseFloat(loc[1])]
+		})
 	});
+
 	console.log(entry)
 
-	res.status(200)
-
-	// entry.save();
-	// res.status(200).send("Entry saved.");
+	entry.validate().then(resolve => {
+		entry.save()
+		req.flash('info', 'Journal entry created')
+		res.redirect('/')
+	}).catch(reject => {
+		console.log(reject.errors)
+		res.render('newEntry', {errors: { mood: reject.errors.mood ? reject.errors.mood.properties.message : null, entry: reject.errors.entry ? reject.errors.entry.properties.message : null }})
+	})
 });
 
-/**
- * Allow a user to modify their own entry.
- */
-router.post('/update/:entryId', checkAuth, async function(req, res, next){
+router.post('/update', async function(req, res, next) {
+	if (!req.isAuthenticated()) {
+		req.flash('info', 'You must sign in to go here')
+		return res.redirect('/')
+	}
+
 	var entry = await Entry.findOne({
-		userId : req.user._id,
-		_id : req.params.entryId
+		_id : req.body.entryId
 	});
 
-	if(!entry){
-		var error = new Error('Entry not found.');
-		error.status = 404;
-		throw error;
+	if (!entry) {
+		req.flash('info', 'An error has occured while loading this entry')
+		return res.redirect('/')
 	}
 
-	if(!(req.body.entry && req.body.mood && req.body.location && req.body.weather)){
-		console.log(req.body);
-		var error = new Error('Missing required information.');
-		error.status = 400;
-		throw error;
+	if (req.body.preUpdate) {
+		return res.render('editEntry', { entry: entry })
 	}
 
-	entry.entry = req.body.entry;
-	entry.mood = req.body.mood;
-	entry.location = req.body.location;
-	entry.weather = req.body.weather;
-	entry.save();
-	res.status(200).send('Entry saved.');
-});
+	entry.mood = req.body.mood
+	entry.entry = req.body.entry
+
+	entry.validate().then(resolve => {
+		entry.save()
+		req.flash('info', 'Journal entry updated')
+		res.redirect('/')
+	}).catch(reject => {
+		console.log(reject.errors)
+		res.render('editEntry', {errors: { mood: reject.errors.mood ? reject.errors.mood.properties.message : null, entry: reject.errors.entry ? reject.errors.entry.properties.message : null }})
+	})
+})
+
 
 /**
  * Allow a user to delete one of their own entries.
  */
-router.post('/delete/:entryId', checkAuth, async function(req, res,next){
-	const entry = Entry.deleteOne({
-		userId : req.users._id,
-		_id : req.params.entryId
-	});
+router.post('/delete', async function(req, res,next){
+	if (!req.isAuthenticated()) {
+		req.flash('info', 'You must sign in to go here')
+		return res.redirect('/')
+	}
+
+	const entry = await Entry.findByIdAndDelete(req.body.entryId)
 
 	if(!entry){
-		res.status(404).send("Not found.");
-		next();
+		req.flash('info', 'There was an error when attempting to delete this entry')
+		return res.redirect('/')
 	}
+	req.flash('info', 'Journal entry deleted')
+	return res.redirect('/')
 });
 
 module.exports = { router, Entry };

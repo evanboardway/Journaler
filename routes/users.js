@@ -211,7 +211,7 @@ router.post('/new', async function (req, res, next) {
 	newUser.last = req.body.last
 
 	if (req.body.password != req.body.passwordConfirm) {
-		res.render('register', { user: newUser, errors: { passwordConfirm: "Passwords don't match" } })
+		return res.render('register', { user: newUser, errors: { passwordConfirm: "Passwords don't match" } })
 	}
 
 	validateUniqueEmail(req.body.email).then(resolve => {
@@ -230,7 +230,7 @@ router.post('/new', async function (req, res, next) {
 router.get('/update', async function (req, res, next) {
 	if (!req.isAuthenticated()) {
 		req.flash('info', 'You must sign in to go here')
-		res.redirect('/')
+		return res.redirect('/')
 	}
 
 	res.render('settings', { user: req.user })
@@ -240,7 +240,7 @@ router.post('/update', async function (req, res, next) {
 
 	if (!req.isAuthenticated()) {
 		req.flash('info', 'You must sign in to go here')
-		res.redirect('/')
+		return res.redirect('/')
 	}
 
 	let user = await User.findOne({
@@ -279,7 +279,7 @@ router.post('/update', async function (req, res, next) {
 router.get('/delete', async function (req, res, next) {
 	if (!req.isAuthenticated()) {
 		req.flash('info', 'You must sign in to go here')
-		res.redirect('/')
+		return res.redirect('/')
 	}
 
 	let user = await User.findByIdAndDelete(req.user._id)
@@ -296,7 +296,7 @@ router.get('/delete', async function (req, res, next) {
 router.post('/resetPassword', async function (req, res, next) {
 	if (!req.isAuthenticated()) {
 		req.flash('info', 'You must sign in to go here')
-		res.redirect('/')
+		return res.redirect('/')
 	}
 
 	let errors = new Object()
