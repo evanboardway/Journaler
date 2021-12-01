@@ -227,12 +227,22 @@ router.post('/new', async function (req, res, next) {
 	})
 });
 
-router.get('/update', checkAuth, async function (req, res, next) {
-	res.render('settings', { user: req.user })
+router.get('/update', async function (req, res, next) {
+	if (!req.isAuthenticated()) {
+		req.flash('info', 'You must sign in to go here')
+		res.redirect('/')
+	}
 
+	res.render('settings', { user: req.user })
 })
 
-router.post('/update', checkAuth, async function (req, res, next) {
+router.post('/update', async function (req, res, next) {
+
+	if (!req.isAuthenticated()) {
+		req.flash('info', 'You must sign in to go here')
+		res.redirect('/')
+	}
+
 	let user = await User.findOne({
 		_id: req.user._id
 	})
@@ -266,7 +276,29 @@ router.post('/update', checkAuth, async function (req, res, next) {
 
 })
 
-router.post('/resetPassword', checkAuth, async function (req, res, next) {
+router.get('/delete', async function (req, res, next) {
+	if (!req.isAuthenticated()) {
+		req.flash('info', 'You must sign in to go here')
+		res.redirect('/')
+	}
+
+	let user = await User.findByIdAndDelete(req.user._id)
+
+	if (!user) {
+		req.flash('info', 'An error has occured while attempting to delete this account.')
+		res.redirect('/')
+	} else {
+		req.flash('info', 'Successfully deleted account.')
+		res.redirect('/logout')
+	}
+})
+
+router.post('/resetPassword', async function (req, res, next) {
+	if (!req.isAuthenticated()) {
+		req.flash('info', 'You must sign in to go here')
+		res.redirect('/')
+	}
+
 	let errors = new Object()
 	let hasErrors = false
 
@@ -280,15 +312,15 @@ router.post('/resetPassword', checkAuth, async function (req, res, next) {
 	}
 
 	const oldPassword = pbkdf2.pbkdf2Sync(req.body.oldPassword, user.salt, 1, 32, 'sha512').toString('hex');
-	
+
 	if (oldPassword != user.password) {
 		hasErrors = true
 		errors.oldPassword = 'Incorrect password'
 	}
-	
+
 	const salt = crypto.randomBytes(32).toString('hex');
 	const newPassword = pbkdf2.pbkdf2Sync(req.body.newPassword, salt, 1, 32, 'sha512').toString('hex');
-	
+
 	if (hasErrors) {
 		res.render('settings', { errors: errors })
 	} else {

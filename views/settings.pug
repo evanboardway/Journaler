@@ -1,51 +1,55 @@
 extends layout
 
 block content
-    section.settings-content-container
-        form(action='/users/update' method='post')
-            h1.form-component Account Information
+    div.settings-wrapper
+        section.settings-content-container
+            form(action='/users/update' method='post')
+                h1.form-component Account Information
 
-            div.form-component
-                label(for='email'): b Email:
-                input(type='text' placeholder="email" name='email', value=user.email)
-                if errors && errors.email
-                    label(for='email'): p.error #{errors.email}
+                div.form-component
+                    label(for='email'): b Email:
+                    input(type='text' placeholder="email" name='email', value=user.email)
+                    if errors && errors.email
+                        label(for='email'): p.error #{errors.email}
 
-            div.form-component
-                label(for='first'): b First Name:
-                input(type='text' placeholder="ex. John" name='first', value=user.first)
-                if errors && errors.first
-                    label(for='first'): p.error #{errors.first}
+                div.form-component
+                    label(for='first'): b First Name:
+                    input(type='text' placeholder="ex. John" name='first', value=user.first)
+                    if errors && errors.first
+                        label(for='first'): p.error #{errors.first}
 
-            div.form-component
-                label(for='last'): b Last Name:
-                input(type='text' placeholder="ex. Doe" name='last', value=user.last)
-                if errors && errors.last
-                    label(for='last'): p.error #{errors.last}
+                div.form-component
+                    label(for='last'): b Last Name:
+                    input(type='text' placeholder="ex. Doe" name='last', value=user.last)
+                    if errors && errors.last
+                        label(for='last'): p.error #{errors.last}
 
-            div.form-component
-                button(type='submit') SAVE CHANGES
+                div.form-component
+                    button(type='submit') SAVE CHANGES
 
-        form(action='/users/resetPassword' method='post')
-            h1.form-component Change Password
+            form(action='/users/resetPassword' method='post')
+                h1.form-component Change Password
 
-            div.form-component
-                label(for='oldPassword'): b Old Password:
-                input(type='password' placeholder="old password" name='oldPassword')
-                if errors && errors.oldPassword
-                    label(for='oldPassword'): p.error #{errors.oldPassword}
+                div.form-component
+                    label(for='oldPassword'): b Old Password:
+                    input(type='password' placeholder="old password" name='oldPassword')
+                    if errors && errors.oldPassword
+                        label(for='oldPassword'): p.error #{errors.oldPassword}
 
-            div.form-component
-                label(for='newPassword'): b New Password:
-                input(type='password' placeholder="new password" name='newPassword')
-                if errors && errors.newPassword
-                    label(for='newPassword'): p.error #{errors.newPassword}
+                div.form-component
+                    label(for='newPassword'): b New Password:
+                    input(type='password' placeholder="new password" name='newPassword')
+                    if errors && errors.newPassword
+                        label(for='newPassword'): p.error #{errors.newPassword}
 
-            div.form-component
-                label(for='passwordConfirm'): b Confirm Password:
-                input(type='password' placeholder="confirm new password" name='passwordConfirm')
-                if errors && errors.passwordConfirm
-                    label(for='passwordConfirm'): p.error #{errors.passwordConfirm}
+                div.form-component
+                    label(for='passwordConfirm'): b Confirm Password:
+                    input(type='password' placeholder="confirm new password" name='passwordConfirm')
+                    if errors && errors.passwordConfirm
+                        label(for='passwordConfirm'): p.error #{errors.passwordConfirm}
 
-            div.form-component
-                button(type='submit') UPDATE PASSWORD
+                div.form-component
+                    button(type='submit') UPDATE PASSWORD
+            
+        
+        a(href="/users/delete") Delete Account
