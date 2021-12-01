@@ -28,37 +28,53 @@ var router = express.Router();
  */
 const mongoose = require('mongoose');
 
+// Validators
+const validateRequired = (value) => {
+	return value ? true : false
+}
+
+function validateUniqueEmail(value) {
+	return new Promise((resolve, reject) => {
+		User.findOne({ email: value }, function (err, user) {
+			if (err) { reject(err) }
+			else if (user) { reject("An account with this email address already exists") }
+			else { resolve(true) }
+		})
+	})
+}
+
 // User schema
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
 	email: {
 		type: String,
-		required: true,
 		unique: true,
 		validate: {
-			validator: function(value) {
-				return new Promise((resolve, reject) => {
-					User.findOne({email: value}, function(err, user) {
-						if (err) { reject(err) }
-						else if (user) { reject("An account with this email address already exists") }
-						else { resolve(true) }
-					})
-				})
-			},
+			validator: validateRequired,
+			message: "Cant be blank"
 		}
 	},
 	first: {
 		type: String,
-		reqired: true
+		validate: {
+			validator: validateRequired,
+			message: "Cant be blank"
+		},
 	},
 	last: {
 		type: String,
-		required: true
+		validate: {
+			validator: validateRequired,
+			message: "Cant be blank"
+		}
 	},
 	password: {
 		type: String,
-		required: true
+		validate: {
+			validator: validateRequired,
+			message: "Cant be blank"
+		}
 	},
 	salt: String,
 	date: {
@@ -96,8 +112,8 @@ const validPassword = function (password, salt, hash) {
  * how it works with our API here.
  */
 passport.use(new Strategy(
-	function (username, password, done) {
-		User.findOne({ username: username }, function (err, user) {
+	function (email, password, done) {
+		User.findOne({ email: email }, function (err, user) {
 			// Can't connect to Db?  We're done.
 			if (err) {
 				return done(err);
@@ -147,16 +163,16 @@ router.get('/', checkAuth, async function (req, res, next) {
  * This function may be used by an administrator, or by a user
  * ONLY IF they are asking for their own information.
  */
-router.get('/find/:userId', checkAuth, async function (req, res, next) {
-	if (req.user.admin || req.user._id == req.params.userId) {
-		var user = await User.findOne({ _id: req.params.userId });
-		res.json(user);
-	} else {
-		var error = new Error("Not authorized.");
-		error.status = 401;
-		throw error;
-	}
-});
+// router.get('/find/:userId', checkAuth, async function (req, res, next) {
+// 	if (req.user.admin || req.user._id == req.params.userId) {
+// 		var user = await User.findOne({ _id: req.params.userId });
+// 		res.json(user);
+// 	} else {
+// 		var error = new Error("Not authorized.");
+// 		error.status = 401;
+// 		throw error;
+// 	}
+// });
 
 /**
  * POST a new user.
@@ -181,34 +197,107 @@ router.post('/', checkAuth, async function (req, res, next) {
 });
 
 router.get('/new', async function (req, res, next) {
-	res.render('register', {errors: {}});
+	res.render('register', { errors: {} });
 });
 
 router.post('/new', async function (req, res, next) {
 	let salt = crypto.randomBytes(32).toString('hex');
-
-	if (req.body.password != req.body.passwordConfirm) {
-		res.render('register', { errors: { passwordConfirm: "Passwords don't match" } })
-	}
-
 	var newUser = User();
+
 	newUser.email = req.body.email;
 	newUser.password = pbkdf2.pbkdf2Sync(req.body.password, salt, 1, 32, 'sha512').toString('hex');
 	newUser.salt = salt;
 	newUser.first = req.body.first
 	newUser.last = req.body.last
 
-	newUser.validate().then(resolve => {
-		newUser.save()
-		req.flash('info', 'Account created successfully')
-		res.redirect('/')
+	if (req.body.password != req.body.passwordConfirm) {
+		res.render('register', { user: newUser, errors: { passwordConfirm: "Passwords don't match" } })
+	}
+
+	validateUniqueEmail(req.body.email).then(resolve => {
+		newUser.validate().then(resolve => {
+			newUser.save()
+			req.flash('info', 'User updated successfully')
+			res.redirect('/')
+		}).catch(reject => {
+			res.render('register', { user: newUser, errors: { first: reject.errors.first ? reject.errors.first.properties.message : null, last: reject.errors.last ? reject.errors.last.properties.message : null, password: reject.errors.password ? reject.errors.password.properties.message : null } })
+		})
 	}).catch(reject => {
-		res.render('register', {errors: {email: reject.errors.email.reason}})
+		res.render('register', { user: newUser, errors: { email: reject } })
 	})
 });
 
-router.get('/resetPassword', async function (req, res, next) {
-	res.render('register')
+router.get('/update', checkAuth, async function (req, res, next) {
+	res.render('settings', { user: req.user })
+
+})
+
+router.post('/update', checkAuth, async function (req, res, next) {
+	let user = await User.findOne({
+		_id: req.user._id
+	})
+
+	const validateUser = (user) => {
+		console.log("Validate user")
+		user.validate().then(resolve => {
+			user.save()
+			req.flash('info', 'User updated successfully')
+			res.redirect('/')
+		}).catch(reject => {
+			console.log(reject.errors.last)
+			res.render('settings', { user: user, errors: { first: reject.errors.first ? reject.errors.first.properties.message : null, last: reject.errors.last ? reject.errors.last.properties.message : null, password: reject.errors.password ? reject.errors.password.properties.message : null } })
+		})
+	}
+
+	if (user.email === req.body.email) {
+		user.first = req.body.first
+		user.last = req.body.last
+		validateUser(user)
+	} else {
+		user.email = req.body.email
+		user.first = req.body.first
+		user.last = req.body.last
+		validateUniqueEmail(req.body.email).then(resolve => {
+			validateUser(user)
+		}).catch(reject => {
+			res.render('settings', { user: req.user, errors: { email: reject, } })
+		})
+	}
+
+})
+
+router.post('/resetPassword', checkAuth, async function (req, res, next) {
+	let errors = new Object()
+	let hasErrors = false
+
+	let user = await User.findOne({
+		_id: req.user._id
+	})
+
+	if (req.body.newPassword !== req.body.passwordConfirm) {
+		hasErrors = true
+		errors.newPassword = 'Passwords must match'
+	}
+
+	const oldPassword = pbkdf2.pbkdf2Sync(req.body.oldPassword, user.salt, 1, 32, 'sha512').toString('hex');
+	
+	if (oldPassword != user.password) {
+		hasErrors = true
+		errors.oldPassword = 'Incorrect password'
+	}
+	
+	const salt = crypto.randomBytes(32).toString('hex');
+	const newPassword = pbkdf2.pbkdf2Sync(req.body.newPassword, salt, 1, 32, 'sha512').toString('hex');
+	
+	if (hasErrors) {
+		res.render('settings', { errors: errors })
+	} else {
+		user.password = newPassword
+		user.salt = salt
+		user.save()
+		req.flash('info', 'Updated password successfully')
+		res.redirect('/')
+	}
 })
 
 module.exports = { checkAuth, router, User, validPassword };

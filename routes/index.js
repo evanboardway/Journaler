@@ -8,8 +8,8 @@ var Entry = require('./entries.js').Entry;
 var validPassword = require('./users.js').validPassword;
 
 passport.use(new LocalStrategy(
-  function(username, password, done){ 
-    User.findOne({username: username }, function(err, user){
+  function(email, password, done){ 
+    User.findOne({email: email }, function(err, user){
       if(err) { return done(err); }
       if(!user) { return done(null, false); }
       if(!validPassword(password, user.salt, user.password)){ return done(null, false); }
@@ -24,11 +24,11 @@ var checkAuthLocal = passport.authenticate('local', { failureRedirect: '/', sess
 router.get('/', function(req, res, next) {
   var name;
   if(req.user){
-    var name = req.user.email;
+    name = req.user.email;
   }
   flash = req.flash('info')
   hasFlash = flash.length == 0 ? false : true
-  res.render('index', { title: 'MyJournal - Data Collection Device', name: name, flash: flash, hasFlash: hasFlash});
+  res.render('index', { title: 'MyJournal - Data Collection Device', name: name, flash: flash, hasFlash: hasFlash });
 });
 
 router.get('/about', function(req, res, next){
@@ -38,8 +38,8 @@ router.get('/about', function(req, res, next){
 router.post('/login', checkAuthLocal, function(req, res, next){
   res.redirect('/');
 });
-
 router.get('/addUser', checkAuthLocal, function(req, res, next){
+
   if(req.user.admin){
 	res.render('addUser');
   } else {

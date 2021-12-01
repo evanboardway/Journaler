@@ -1,30 +1,32 @@
 extends layout
 
 block content
-    section.content-container
+    section.user-content-container
         h1.form-component SIGN UP
         form(action='/users/new' method='post')
 
-            if errors.password || errors.passwordConfirm || errors.email
-                p.form-component.error Check the errors below
-
             div.form-component
                 label(for='email'): b Email:
-                input(type='text' placeholder="email" name='email')
+                input(type='text' placeholder="email" name='email' value=user?user.email:null)
                 label(for='email'): p.error #{errors.email}
 
             div.form-component
                 label(for='first'): b First Name:
-                input(type='text' placeholder="ex. John" name='first')
+                input(type='text' placeholder="ex. John" name='first' value=user?user.first:null)
+                if errors && errors.first
+                    label(for='first'): p.error #{errors.first}
 
             div.form-component
                 label(for='last'): b Last Name:
-                input(type='text' placeholder="ex. Doe" name='last')
+                input(type='text' placeholder="ex. Doe" name='last', value=user?user.last:null)
+                if errors && errors.last
+                    label(for='last'): p.error #{errors.last}
             
             div.form-component
                 label(for='password'): b Password:
                 input(type='password' placeholder="password" name='password')
-                label(for='password'): p.error #{errors.password}
+                if errors && errors.password
+                    label(for='password'): p.error #{errors.password}
 
             div.form-component
                 label(for='passwordConfirm'): b Confirm Password:

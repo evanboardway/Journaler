@@ -10,8 +10,12 @@ html(lang="en")
 
     block content
 
-    div.flash
-      if hasFlash
-        span.info #{flash}
+    if hasFlash
+      div(id="flash").flash
+        div.flash-info
+          span.info #{flash}
+          button(id="flashButton") X
 
     include ./footer.pug
+    
+    script(src='/scripts/flash.js')
