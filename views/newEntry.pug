@@ -1,0 +1,27 @@
+extends layout
+
+block content
+    section.entry-content-container
+        h1.form-component New Journal Entry
+        form(action='/entries/new' method='post')
+            div.form-component
+                label(for='mood'): b Mood:
+                input(type='text' placeholder="Happy" name='mood')
+                if errors && errors.mood
+                    label(for='mood'): p.error #{errors.mood}
+            
+            div.form-component
+                label(for='entry'): b Entry:
+                textarea(type='textarea' placeholder="Whatchu wanna get off your chest huh?" name='entry')
+                if errors && errors.entry
+                    label(for='entry'): p.error #{errors.entry}
+            
+            input(type='hidden' name='location' id="locationInput")
+
+
+            div.form-component
+                button(type='submit' id="newEntrySubmit") CREATE ENTRY
+    
+    script(src='/scripts/geolocation.js')
+    
+

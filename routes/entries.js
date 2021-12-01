@@ -27,6 +27,11 @@ var checkAuth = user.checkAuth;
  * Entry is a journal entry.
  */
 
+// Schema validator
+const validateRequired = (value) => {
+	return value ? true : false
+}
+
 // Pull in the mongoose library
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
@@ -51,15 +56,27 @@ const entrySchema = new Schema({
 	},
 	mood: {
 		type: String,
-		required: true
+		required: true,
+		validate: {
+			validator: validateRequired,
+			message: "Cant be blank"
+		}
 	},
 	entry: {
 		type: String,
-		required: true
+		required: true,
+		validate: {
+			validator: validateRequired,
+			message: "Cant be blank"
+		}
 	},
 	location: {
 		type: pointSchema,
 		required: true
+	},
+	date: {
+		type: Date,
+		default: Date.now
 	},
 	weather: String
 });
@@ -79,7 +96,7 @@ router.get('/', checkAuth, async function(req, res, next) {
  * Get single entry for logged in user
  */
 
-router.get('/:entryId', checkAuth, async function(req, res, next){
+router.get('/find/:entryId', checkAuth, async function(req, res, next){
 	var entry = await Entry.findOne({
 		_id : req.params.entryId
 	});
@@ -95,26 +112,46 @@ router.get('/:entryId', checkAuth, async function(req, res, next){
 /**
  * Allow logged in user to create new entry.
  */
-router.post('/', checkAuth, async function(req, res, next){
-	if(!(req.body.entry && req.body.mood && req.body.location)){
-		var error = new Error('Missing required information.');
-		error.status = 400;
-		throw error;
+router.get('/new', async function(req, res, next) {
+	if (!req.isAuthenticated()) {
+		req.flash('info', 'You must sign in to go here')
+		res.redirect('/')
 	}
-	var entry = new Entry({
+
+	res.render('newEntry')
+})
+
+
+router.post('/new', async function(req, res, next){
+	if (!req.isAuthenticated()) {
+		req.flash('info', 'You must sign in to go here')
+		res.redirect('/')
+	}
+
+	let point = new Point({
+		type: 'Point',
+		coordinates: req.body.location
+	})
+
+	
+	let entry = new Entry({
 		userId: req.user._id,
 		entry: req.body.entry,
 		mood: req.body.mood,
-		location: req.body.location
+		location: point
 	});
-	entry.save();
-	res.status(200).send("Entry saved.");
+	console.log(entry)
+
+	res.status(200)
+
+	// entry.save();
+	// res.status(200).send("Entry saved.");
 });
 
 /**
  * Allow a user to modify their own entry.
  */
-router.put('/:entryId', checkAuth, async function(req, res, next){
+router.post('/update/:entryId', checkAuth, async function(req, res, next){
 	var entry = await Entry.findOne({
 		userId : req.user._id,
 		_id : req.params.entryId
@@ -144,7 +181,7 @@ router.put('/:entryId', checkAuth, async function(req, res, next){
 /**
  * Allow a user to delete one of their own entries.
  */
-router.delete('/:entryId', checkAuth, async function(req, res,next){
+router.post('/delete/:entryId', checkAuth, async function(req, res,next){
 	const entry = Entry.deleteOne({
 		userId : req.users._id,
 		_id : req.params.entryId
