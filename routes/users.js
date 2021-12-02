@@ -159,22 +159,6 @@ router.get('/', checkAuth, async function (req, res, next) {
 });
 
 /**
- * GET a single user.
- * This function may be used by an administrator, or by a user
- * ONLY IF they are asking for their own information.
- */
-// router.get('/find/:userId', checkAuth, async function (req, res, next) {
-// 	if (req.user.admin || req.user._id == req.params.userId) {
-// 		var user = await User.findOne({ _id: req.params.userId });
-// 		res.json(user);
-// 	} else {
-// 		var error = new Error("Not authorized.");
-// 		error.status = 401;
-// 		throw error;
-// 	}
-// });
-
-/**
  * POST a new user.
  * Only administrators can add new users.
  */
@@ -332,14 +316,5 @@ router.post('/resetPassword', async function (req, res, next) {
 	}
 })
 
-router.get('/admin', async function (req, res, next) {
-	if (!req.isAuthenticated() || !req.user.admin) {
-		req.flash('info', 'You do not have permission to go here')
-		res.redirect('/');
-	} else {
-		var users = await User.find({});
-		res.render('userAdministration', { users: users });
-	}
-})
 
-module.exports = { checkAuth, router, User, validPassword };
+module.exports = { checkAuth, router, User, validPassword, validateUniqueEmail };

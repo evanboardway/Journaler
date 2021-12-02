@@ -10,7 +10,8 @@ block content
                 span(class="w-1/5 overflow-hidden").font-bold First Name
                 span(class="w-1/5 overflow-hidden").font-bold Last Name 
                 span(class="w-1/5 overflow-hidden").font-bold Administrator
-                span(class="w-1/5 overflow-hidden").font-bold Action
+                span(class="w-1/5 overflow-hidden").font-bold Edit
+                span(class="w-1/5 overflow-hidden").font-bold Delete
             div.users-list
                 each user in users
                     div(class="flex flex-row justify-between items-center my-2 p-2 bg-gray-800 rounded-md")
@@ -18,6 +19,11 @@ block content
                         span(class="w-1/5 overflow-hidden") #{user.first}
                         span(class="w-1/5 overflow-hidden") #{user.last}
                         span(class="w-1/5 overflow-hidden") #{user.admin}
-                        form(action='/users/update' method='post' class="w-1/5 overflow-hidden")
+                        form(action='/admin/update' method='post' class="w-1/5 overflow-hidden")
                             input(type='hidden' name="userId" value=user._id)
-                            button(type='submit' class="bg-yellow-500 text-yellow-700 rounded-sm p-2") EDIT
+                            input(type='hidden' name="actuallyGetRequest" value='true')
+                            button(type='submit' class="text-yellow-500 hover:underline") EDIT
+                        form(action='/admin/delete' method='post' class="w-1/5 overflow-hidden")
+                            input(type='hidden' name="userId" value=user._id)
+                            input(type='hidden' name="actuallyGetRequest" value='true')
+                            button(type='submit' class="text-red-500 hover:underline") DELETE

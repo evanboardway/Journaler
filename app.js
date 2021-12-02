@@ -74,6 +74,7 @@ mongoose.connection.on('error', err => {
 var indexRouter = require('./routes/index.js');
 var usersRouter = require('./routes/users.js');
 var entriesRouter = require('./routes/entries.js');
+var adminRouter = require('./routes/admin.js');
 
 /**********
  * Create an express app instance and setup all
@@ -122,6 +123,8 @@ app.use((req, res, next) => {
 app.use('/', indexRouter);
 app.use('/users', usersRouter.router);
 app.use('/entries', entriesRouter.router);
+app.use('/admin', adminRouter.router);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
