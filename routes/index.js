@@ -70,4 +70,5 @@ router.get('/journal', async function (req, res) {
   }
 });
 
+
 module.exports = router;

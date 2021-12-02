@@ -236,6 +236,7 @@ nav {
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
+  background-color: rgba(33, 33, 33, 0.5);
 }
 
 .settings-wrapper a {
@@ -251,7 +252,6 @@ nav {
 }
 
 .settings-content-container {
-  background-color: rgba(33, 33, 33, 0.5);
   display: flex;
   flex-direction: row;
   flex: 1 1 auto;
@@ -305,6 +305,7 @@ nav {
   justify-content: center;
   align-items: center;
   
+  
 }
 
 .entry-content-container form {
@@ -316,6 +317,21 @@ nav {
   width: 100%;
   max-width: 600px;
   box-shadow: 0px 0px 20px 20px rgba(10, 10, 10, 0.1);
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgba(255,255,255,0.1);
+}
+
+.entry-content-container form textarea {
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgba(255,255,255,0.1);
+}
+
+.entry-content-container form input {
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgba(255,255,255,0.1);
 }
 
 .user-other-options {
@@ -463,4 +479,33 @@ form p.error {
 .journal-entry .submit-journal:hover {
   background-color: rgba(154, 6, 127, 0.9);
   color: white
+}
+
+.admin {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: rgba(216, 80, 80, 0.7);
+  padding: 1em;
+}
+
+.admin:hover {
+  background-color: rgba(216, 80, 80, 0.9);
+}
+
+.user-administration-list {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0.5em;
+  box-shadow: 0px 0px 10px 10px rgba(10, 10, 10, 0.1);
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgba(255,255,255,0.1);
+  width: 80%;
+}
+
+.users-list {
+  max-height: 800px;
+  overflow-y: scroll;
 }

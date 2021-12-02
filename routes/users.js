@@ -332,4 +332,14 @@ router.post('/resetPassword', async function (req, res, next) {
 	}
 })
 
+router.get('/admin', async function (req, res, next) {
+	if (!req.isAuthenticated() || !req.user.admin) {
+		req.flash('info', 'You do not have permission to go here')
+		res.redirect('/');
+	} else {
+		var users = await User.find({});
+		res.render('userAdministration', { users: users });
+	}
+})
+
 module.exports = { checkAuth, router, User, validPassword };
