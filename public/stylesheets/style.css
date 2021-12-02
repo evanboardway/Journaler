@@ -114,6 +114,14 @@ nav {
   width: 100%;
 }
 
+.anim-fade {
+  animation: fadeIn 1s;
+  -webkit-animation: fadeIn 1s;
+  -moz-animation: fadeIn 1s;
+  -o-animation: fadeIn 1s;
+  -ms-animation: fadeIn 1s;
+}
+
 .flash {
   width: 100%;
   position: absolute;
@@ -211,6 +219,9 @@ nav {
   align-items: center;
   border-radius: 0.5em;
   box-shadow: 0px 0px 10px 10px rgba(10, 10, 10, 0.1);
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgba(255,255,255,0.1);
 }
 
 .home-card:hover {
@@ -276,6 +287,15 @@ nav {
   width: 100%;
   max-width: 400px;
   box-shadow: 0px 0px 20px 20px rgba(10, 10, 10, 0.1);
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgba(255,255,255,0.1);
+}
+
+.user-content-container form input {
+  border-style: solid;
+  border-width: 2px;
+  border-color: rgba(255,255,255,0.1);
 }
 
 .entry-content-container {
@@ -346,6 +366,7 @@ nav {
 
 .form-component button:disabled {
   background-color: rgba(10, 10, 10, 0.4);
+  color: rgba(255, 255, 255, 0.3);
 }
 
 .form-component button:hover {
@@ -399,6 +420,9 @@ form p.error {
   padding: 1em;
   border-radius: 0.5em;
   margin: 0.5em;
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgba(255,255,255,0.1);
 }
 
 .journal {
@@ -410,6 +434,15 @@ form p.error {
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 0.5em;
   box-shadow: 0px 0px 10px 10px rgba(10, 10, 10, 0.1);
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgba(255,255,255,0.1);
+
+}
+
+.journal-image {
+  position: absolute;
+  opacity: 40%;
 }
 
 .journal-entry p {

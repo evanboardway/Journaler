@@ -141,14 +141,11 @@ router.post('/new', async function(req, res, next){
 		})
 	});
 
-	console.log(entry)
-
 	entry.validate().then(resolve => {
 		entry.save()
 		req.flash('info', 'Journal entry created')
 		res.redirect('/')
 	}).catch(reject => {
-		console.log(reject.errors)
 		res.render('newEntry', {errors: { mood: reject.errors.mood ? reject.errors.mood.properties.message : null, entry: reject.errors.entry ? reject.errors.entry.properties.message : null }})
 	})
 });

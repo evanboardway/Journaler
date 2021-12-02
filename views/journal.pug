@@ -3,11 +3,12 @@ extends layout
 block content
 	link(href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet")
 
-	section.journal-wrapper
+	section(class="anim-fade").journal-wrapper
 		h1 Your Journal Entries
 		div(class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mx-10")
 			each entry in entries
 				div(class="flex flex-col justify-between").journal-entry
+					img(id="journalImage" src=getSvgWeatherIcon(entry.weather)).journal-image
 					form(class="mt-1 p-3 flex flex-row justify-end" action='/entries/delete' method='post')
 						input(type='hidden' name='entryId' value=entry._id)
 						button(class="text-red-500 font-bold text-xl" type='submit') x
